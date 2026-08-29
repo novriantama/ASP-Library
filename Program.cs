@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
+using Npgsql;
 using ASP_Library.Data;
 using ASP_Library.Repositories;
 using ASP_Library.Services;
@@ -18,14 +19,36 @@ builder.WebHost.UseUrls($"http://{appHost}:{appPort}");
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// Build PostgreSQL connection string from environment variables
-var dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
-var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
-var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "library_db";
-var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres";
+// Build / Resolve PostgreSQL connection string from .env / environment variables
+var rawConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-var connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPassword}";
+string connectionString;
+if (!string.IsNullOrWhiteSpace(rawConnectionString) && !rawConnectionString.Contains("[Password]"))
+{
+    // Substitute placeholders from .env variables
+    connectionString = rawConnectionString
+        .Replace("{DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+        .Replace("{DB_PORT}", Environment.GetEnvironmentVariable("DB_PORT") ?? "5432")
+        .Replace("{DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "library_db")
+        .Replace("{DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "postgres")
+        .Replace("{DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres");
+}
+else
+{
+    // Fallback: build connection string directly from individual .env variables
+    var csBuilder = new NpgsqlConnectionStringBuilder
+    {
+        Host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost",
+        Port = int.TryParse(Environment.GetEnvironmentVariable("DB_PORT"), out var port) ? port : 5432,
+        Database = Environment.GetEnvironmentVariable("DB_NAME") ?? "library_db",
+        Username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres",
+        Password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "postgres"
+    };
+    connectionString = csBuilder.ConnectionString;
+}
+
+// Store resolved connection string in configuration for any dependent services
+builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
 
 // DbContext with PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
