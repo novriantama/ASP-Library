@@ -1,6 +1,44 @@
-@ASP_Library_HostAddress = http://localhost:5045
+@base_url = http://localhost:8080
 
-GET {{ASP_Library_HostAddress}}/weatherforecast/
+### 1. Get all authors
+GET {{base_url}}/api/authors
+Accept: application/json
+
+###
+
+### 2. Create a new author
+# @name createAuthor
+POST {{base_url}}/api/authors
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "Robert",
+  "lastName": "Martin"
+}
+
+###
+
+### 3. Get author by ID
+GET {{base_url}}/api/authors/1
+Accept: application/json
+
+###
+
+### 4. Update author by ID
+PUT {{base_url}}/api/authors/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "Robert C.",
+  "lastName": "Martin"
+}
+
+###
+
+### 5. Delete author by ID
+DELETE {{base_url}}/api/authors/1
 Accept: application/json
 
 ###

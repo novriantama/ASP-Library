@@ -17,6 +17,7 @@ public class AuthorRepository : IAuthorRepository
     public async Task<List<AuthorResponseDto>> GetAllAuthorsAsync()
     {
         return await _context.Authors
+            .AsNoTracking()
             .Select(a => new AuthorResponseDto
             {
                 AuthorId = a.AuthorId,
@@ -26,9 +27,10 @@ public class AuthorRepository : IAuthorRepository
             .ToListAsync();
     }
 
-    public async Task<AuthorResponseDto> GetAuthorByIdAsync(int authorId)
+    public async Task<AuthorResponseDto?> GetAuthorByIdAsync(int authorId)
     {
         return await _context.Authors
+            .AsNoTracking()
             .Where(a => a.AuthorId == authorId)
             .Select(a => new AuthorResponseDto
             {
