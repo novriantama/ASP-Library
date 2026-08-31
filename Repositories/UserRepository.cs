@@ -43,13 +43,24 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<User?> GetByUsernameOrEmailAsync(string identifier)
+    {
+        var normalized = identifier.Trim().ToLowerInvariant();
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Username.ToLower() == normalized || u.Email.ToLower() == normalized);
+    }
+
     public async Task<int> CreateUserAsync(UserCreateDto user)
     {
+        var passwordHash = user.Password.StartsWith("$2") 
+            ? user.Password 
+            : BCrypt.Net.BCrypt.HashPassword(user.Password);
+
         var userEntity = new User
         {
             Username = user.Username.Trim(),
             Email = user.Email.Trim().ToLowerInvariant(),
-            PasswordHash = user.Password,
+            PasswordHash = passwordHash,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -71,7 +82,9 @@ public class UserRepository : IUserRepository
 
         if (!string.IsNullOrWhiteSpace(user.Password))
         {
-            userEntity.PasswordHash = user.Password;
+            userEntity.PasswordHash = user.Password.StartsWith("$2")
+                ? user.Password
+                : BCrypt.Net.BCrypt.HashPassword(user.Password);
         }
 
         await _context.SaveChangesAsync();

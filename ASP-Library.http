@@ -1,6 +1,25 @@
 @base_url = http://localhost:8080
 
 ##################################################
+### AUTH API
+##################################################
+
+### 0. Login (Get JWT Token)
+# @name login
+POST {{base_url}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "usernameOrEmail": "johndoe",
+  "password": "secretPassword123"
+}
+
+### Store token in variable for subsequent requests
+@authToken = {{login.response.body.token}}
+
+
+##################################################
 ### AUTHORS API
 ##################################################
 

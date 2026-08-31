@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ASP_Library.Dtos;
 using ASP_Library.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ASP_Library.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AuthorsController : ControllerBase
