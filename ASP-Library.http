@@ -1,5 +1,9 @@
 @base_url = http://localhost:8080
 
+##################################################
+### AUTHORS API
+##################################################
+
 ### 1. Get all authors
 GET {{base_url}}/api/authors
 Accept: application/json
@@ -39,6 +43,62 @@ Accept: application/json
 
 ### 5. Delete author by ID
 DELETE {{base_url}}/api/authors/1
+Accept: application/json
+
+###
+
+
+##################################################
+### BOOKS API
+##################################################
+
+### 6. Get all books
+GET {{base_url}}/api/books
+Accept: application/json
+
+###
+
+### 7. Create a new book
+# @name createBook
+POST {{base_url}}/api/books
+Content-Type: application/json
+Accept: application/json
+
+{
+  "isbn": "9780132350884",
+  "title": "Clean Code",
+  "publishDate": "2008-08-01",
+  "authorIds": [
+    1
+  ]
+}
+
+###
+
+### 8. Get book by ID
+GET {{base_url}}/api/books/1
+Accept: application/json
+
+###
+
+### 9. Update book by ID
+PUT {{base_url}}/api/books/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "isbn": "9780132350884",
+  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+  "publishDate": "2008-08-01",
+  "authorIds": [
+    1
+  ]
+}
+
+###
+
+### 10. Delete book by ID
+DELETE {{base_url}}/api/books/1
 Accept: application/json
 
 ###
