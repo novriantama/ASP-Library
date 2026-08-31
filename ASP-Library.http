@@ -102,3 +102,53 @@ DELETE {{base_url}}/api/books/1
 Accept: application/json
 
 ###
+
+
+##################################################
+### USERS API
+##################################################
+
+### 11. Get all users
+GET {{base_url}}/api/users
+Accept: application/json
+
+###
+
+### 12. Create a new user
+# @name createUser
+POST {{base_url}}/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "johndoe",
+  "email": "johndoe@example.com",
+  "password": "secretPassword123"
+}
+
+###
+
+### 13. Get user by ID
+GET {{base_url}}/api/users/1
+Accept: application/json
+
+###
+
+### 14. Update user by ID
+PUT {{base_url}}/api/users/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "johndoe_updated",
+  "email": "john.updated@example.com",
+  "password": "newSecretPassword456"
+}
+
+###
+
+### 15. Delete user by ID
+DELETE {{base_url}}/api/users/1
+Accept: application/json
+
+###
